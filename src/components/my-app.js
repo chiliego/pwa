@@ -127,6 +127,8 @@ class MyApp extends connect(store)(LitElement) {
         line-height: 40px;
         padding: 0 24px;
       }
+      
+      
 
       .drawer-list > a[selected] {
         color: var(--app-drawer-selected-color);
@@ -178,27 +180,39 @@ class MyApp extends connect(store)(LitElement) {
           padding-right: 0px;
         }
       }
+      
+      paper-input.email {
+      width: 50%;
+      margin-left: 10%;
+        --paper-input-container-color: red;
+        --paper-input-container-focus-color: blue;
+        --paper-input-container-invalid-color: green;
+        --paper-input-container-input-color: black;
+      }
     </style>
 
     <!-- Header -->
     <app-header condenses reveals effects="waterfall">
-      <app-toolbar class="toolbar-top">
-        <button class="menu-btn" title="Menu" on-click="${_ => store.dispatch(updateDrawerState(true))}">${menuIcon}</button>
-        <div main-title>${appTitle}</div>
-      </app-toolbar>
-
-      <!-- This gets hidden on a small screen-->
+    <!-- This gets hidden on a small screen-->
       <nav class="toolbar-list">
+        <a selected?="${_page === 'xiaomi'}" href="/xiaomi">Xiaomi</a>
         <a selected?="${_page === 'view1'}" href="/view1">View One</a>
         <a selected?="${_page === 'view2'}" href="/view2">View Two</a>
         <a selected?="${_page === 'view3'}" href="/view3">View Three</a>
       </nav>
+      
+      <app-toolbar class="toolbar-top">
+        <button class="menu-btn" title="Menu" on-click="${_ => store.dispatch(updateDrawerState(true))}">${menuIcon}</button>
+        <div main-title>${appTitle}</div>
+      </app-toolbar>
     </app-header>
+
 
     <!-- Drawer content -->
     <app-drawer opened="${_drawerOpened}"
         on-opened-changed="${e => store.dispatch(updateDrawerState(e.target.opened))}">
       <nav class="drawer-list">
+        <a selected?="${_page === 'xiaomi'}" href="/xiaomi">Xiaomi</a>
         <a selected?="${_page === 'view1'}" href="/view1">View One</a>
         <a selected?="${_page === 'view2'}" href="/view2">View Two</a>
         <a selected?="${_page === 'view3'}" href="/view3">View Three</a>
@@ -207,6 +221,7 @@ class MyApp extends connect(store)(LitElement) {
 
     <!-- Main content -->
     <main role="main" class="main-content">
+      <my-xiaomi class="page" active?="${_page === 'xiaomi'}"></my-xiaomi>
       <my-view1 class="page" active?="${_page === 'view1'}"></my-view1>
       <my-view2 class="page" active?="${_page === 'view2'}"></my-view2>
       <my-view3 class="page" active?="${_page === 'view3'}"></my-view3>

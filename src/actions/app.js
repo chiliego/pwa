@@ -16,7 +16,8 @@ export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 
 export const navigate = (path) => (dispatch) => {
   // Extract the page name from path.
-  const page = path === '/' ? 'view1' : path.slice(1);
+  const page = path === '/' ? 'xiaomi' : path.slice(1);
+  // const page = path === '/' ? 'view1' : path.slice(1);
 
   // Any other info you might want to extract from the path (like page type),
   // you can do here
@@ -28,6 +29,9 @@ export const navigate = (path) => (dispatch) => {
 
 const loadPage = (page) => (dispatch) => {
   switch(page) {
+    case 'xiaomi':
+      import('../components/my-xiaomi.js');
+      break;
     case 'view1':
       import('../components/my-view1.js').then((module) => {
         // Put code in here that you want to run every time when
