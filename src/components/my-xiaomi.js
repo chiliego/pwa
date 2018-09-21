@@ -1,5 +1,5 @@
 import { html } from '@polymer/lit-element';
-import { repeat } from 'lit-html/lib/repeat.js';
+import { repeat } from 'lit-html/directives/repeat.js';
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/iron-icons/iron-icons.js';
 import '@polymer/paper-input/paper-input.js';
@@ -10,8 +10,8 @@ import { PageViewElement } from './page-view-element.js';
 import { SharedStyles } from './shared-styles.js';
 
 class MyXiaomi extends PageViewElement {
-  _render({rooms}) {
-      console.log("_render");
+  render() {
+      const {rooms} = this;
       let newRoomInput = {};
       return html`
       ${SharedStyles}
@@ -21,15 +21,21 @@ class MyXiaomi extends PageViewElement {
             max-width: 15%;
             text-align: center;
         }
+        
+        .newRoomInput {
+            
+        }
       
       </style>
       <section>
         <h2>Xiaomi Robot</h2>
-        <paper-input id="room" class="search" label="Raum" on-change="${i => newRoomInput.name = i.target}">
+        <div>
+        <paper-input id="room" class="newRoomInput" label="Raum" @change="${i => newRoomInput.name = i.target}">
         </paper-input>
-        <paper-input id="coordinates" class="search" label="Koordinaten" on-change="${i => newRoomInput.coords = i.target}">
+        <paper-input id="coordinates" class="newRoomInput" label="Koordinaten" @change="${i => newRoomInput.coords = i.target}">
         </paper-input>
-       <paper-button raised class="indigo" on-click="${() => this.addRoom(newRoomInput)}">Hinzufügen</paper-button>
+       <paper-button raised class="indigo" @click="${() => this.addRoom(newRoomInput)}">Hinzufügen</paper-button>
+        </div>
       </section>
       <section>
         <ul>
@@ -65,7 +71,7 @@ class MyXiaomi extends PageViewElement {
     console.log("Coords: " + newRoomInput.coords.value);
     let newRoom = {name: newRoomInput.name.value, coords: newRoomInput.coords.value}
 
-    this.rooms = [...this.rooms, newRoom];
+    this.rooms=[...this.rooms,newRoom];
 
     newRoomInput.name.value = "";
     newRoomInput.coords.value = "";
