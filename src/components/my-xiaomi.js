@@ -1,5 +1,20 @@
 import { html } from '@polymer/lit-element';
 import { repeat } from 'lit-html/directives/repeat.js';
+
+import { connect } from 'pwa-helpers/connect-mixin.js';
+
+// This element is connected to the Redux store.
+import { store } from '../store.js';
+
+// These are the actions needed by this element.
+import { getRooms } from '../actions/xiaomi.js';
+
+// We are lazy loading its reducer.
+import xiaomi from '../reducers/xiaomi.js';
+store.addReducers({
+  xiaomi
+});
+
 import '@polymer/iron-icon/iron-icon.js';
 import '@polymer/iron-icons/iron-icons.js';
 import '@polymer/paper-input/paper-input.js';
@@ -9,7 +24,7 @@ import { PageViewElement } from './page-view-element.js';
 // These are the shared styles needed by this element.
 import { SharedStyles } from './shared-styles.js';
 
-class MyXiaomi extends PageViewElement {
+class MyXiaomi extends connect(store)(PageViewElement) {
   render() {
       const {rooms} = this;
       let newRoomInput = {};
@@ -49,12 +64,20 @@ class MyXiaomi extends PageViewElement {
 
   constructor() {
     super();
-    this.rooms = [{name: "Küche", coords: "[[25600,25600,25600,25600,1]]"}];
+    // this.rooms = [{name: "Küche", coords: "[[25600,25600,25600,25600,1]]"}];
   }
 
   static get properties() { return {
     rooms: Array,
   }}
+
+  firstUpdated() {
+    store.dispatch(getRooms());
+  }
+
+  _stateChanged(state) {
+    this.rooms = state.xiaomi.rooms;
+  }
 
   addRoom(newRoomInput) {
     if(newRoomInput.name === undefined){
