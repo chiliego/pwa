@@ -190,6 +190,7 @@ class MyApp extends connect(store)(LitElement) {
 
       <!-- This gets hidden on a small screen-->
       <nav class="toolbar-list">
+        <a ?selected="${_page === 'robot'}" href="/robot">Robot</a>
         <a ?selected="${_page === 'xiaomi'}" href="/xiaomi">Xiaomi</a>
         <a ?selected="${_page === 'view1'}" href="/view1">View One</a>
         <a ?selected="${_page === 'view2'}" href="/view2">View Two</a>
@@ -202,6 +203,7 @@ class MyApp extends connect(store)(LitElement) {
     <app-drawer .opened="${_drawerOpened}"
         @opened-changed="${e => store.dispatch(updateDrawerState(e.target.opened))}">
       <nav class="drawer-list">
+        <a ?selected="${_page === 'robot'}" href="/robot">Robot</a>
         <a ?selected="${_page === 'xiaomi'}" href="/xiaomi">Xiaomi</a>
         <a ?selected="${_page === 'view1'}" href="/view1">View One</a>
         <a ?selected="${_page === 'view2'}" href="/view2">View Two</a>
@@ -212,6 +214,7 @@ class MyApp extends connect(store)(LitElement) {
 
     <!-- Main content -->
     <main role="main" class="main-content">
+      <my-robot class="page" ?active="${_page === 'robot'}"></my-robot>
       <my-xiaomi class="page" ?active="${_page === 'xiaomi'}"></my-xiaomi>
       <my-view1 class="page" ?active="${_page === 'view1'}"></my-view1>
       <my-view2 class="page" ?active="${_page === 'view2'}"></my-view2>

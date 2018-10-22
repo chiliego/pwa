@@ -16,7 +16,7 @@ export const CLOSE_SNACKBAR = 'CLOSE_SNACKBAR';
 
 export const navigate = (path) => (dispatch) => {
   // Extract the page name from path.
-  const page = path === '/' ? 'xiaomi' : path.slice(1);
+  const page = path === '/' ? 'robot' : path.slice(1);
   // const page = path === '/' ? 'view1' : path.slice(1);
 
   // Any other info you might want to extract from the path (like page type),
@@ -29,6 +29,9 @@ export const navigate = (path) => (dispatch) => {
 
 const loadPage = (page) => (dispatch) => {
   switch(page) {
+    case 'robot':
+      import('../components/my-robot.js');
+      break;
     case 'xiaomi':
       import('../components/my-xiaomi.js');
       break;

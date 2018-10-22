@@ -3,9 +3,10 @@ export const GET_ROOMS = 'GET_ROOMS';
 export const ROOM_INPUT = 'ROOM_INPUT';
 export const ROOM_INPUT_ERROR = 'ROOM_INPUT_ERROR';
 export const RESET_ROOM_INPUT_ERROR = 'RESET_ROOM_INPUT_ERROR';
-const ROOM_LIST = [
-  {name: "Küche", coords: "[[25600,25600,35600,35600,1]]"}
-];
+export const SELECT_ROOM = 'SELECT_ROOM';
+const ROOM_LIST = {0:
+  {id: 0, name: "Küche", coords: "[[25600,25600,35600,35600,1]]", selected: false}
+};
 
 export const getRooms = () => {
   return {
@@ -40,7 +41,7 @@ export const addRoom = () => (dispatch, getState) => {
   } else {
     dispatch({
       type: ADD_ROOM,
-      room: {name: name, coords: coords}
+      room: {name: name, coords: coords, selected: false}
     });
     dispatch(roomInput({name: "", coords: ""}))
   }
@@ -51,4 +52,20 @@ export const roomInput = (input) => {
     type: ROOM_INPUT,
     input
   }
+}
+
+export const selectRoom = (id) => (dispatch, getState) => {
+  const state = getState();
+  // Just because the UI thinks you can add this to the cart
+  // doesn't mean it's in the inventory (user could've fixed it);
+  if (state.xiaomi.rooms[id].selected === false) {
+    dispatch(selectRoomUnsafe(id));
+  }
+}
+
+export const selectRoomUnsafe = (id) => {
+  return {
+    type: SELECT_ROOM,
+    id
+  };
 }

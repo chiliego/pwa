@@ -7,7 +7,10 @@ import { connect } from 'pwa-helpers/connect-mixin.js';
 import { store } from '../store.js';
 
 // These are the actions needed by this element.
-import { getRooms, addRoom, roomInput } from '../actions/xiaomi.js';
+import { getRooms, addRoom, roomInput, selectRoom } from '../actions/xiaomi.js';
+import { ButtonSharedStyles } from './button-shared-styles.js';
+
+import { plusIcon } from './my-icons.js';
 
 // We are lazy loading its reducer.
 import xiaomi from '../reducers/xiaomi.js';
@@ -27,10 +30,11 @@ import { SharedStyles } from './shared-styles.js';
 
 class MyXiaomi extends connect(store)(PageViewElement) {
   render() {
-      const {rooms, errors, roomName, roomCoords} = this;
+      const {errors, roomName, roomCoords} = this;
       let newRoomInput = {};
       return html`
       ${SharedStyles}
+      ${ButtonSharedStyles}
       <style>
         section > paper-button {
             display: block;
@@ -63,11 +67,20 @@ class MyXiaomi extends connect(store)(PageViewElement) {
         </div>
       </section>
       <section>
-        <ul>
-            ${repeat(rooms, (room) => html`
-                <li>${room.name}: ${room.coords}</li>
-            `)}
-        </ul> 
+            ${Object.keys(this.rooms).map((key) => {
+              const room = this.rooms[key];
+              return html`
+                <div>
+                    <span>${room.name}: ${room.coords}</span>
+                    <button
+                        .disabled="${room.selected === true}"
+                        @click="${(e) => store.dispatch(selectRoom(e.currentTarget.dataset['index']))}"
+                        data-index="${room.id}"
+                        title="${room.selected === true ? 'Selected' : 'Select' }">
+                        ${room.selected === true ? 'Selected' : plusIcon}
+                    </button>
+                </div>
+            `})}
       </section>
     `
   }
@@ -88,6 +101,7 @@ class MyXiaomi extends connect(store)(PageViewElement) {
   }
 
   _stateChanged(state) {
+    console.log(state);
     this.rooms = state.xiaomi.rooms;
     this.errors = state.xiaomi.errors;
 

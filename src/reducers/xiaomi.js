@@ -4,10 +4,10 @@ import {
   ROOM_INPUT,
   ROOM_INPUT_ERROR,
   RESET_ROOM_INPUT_ERROR,
+  SELECT_ROOM
 } from '../actions/xiaomi';
 
-const xiaomi = (state = {rooms: [], input: {}, errors: []}, action) => {
-  console.log(state);
+const xiaomi = (state = {rooms: {}, input: {}, errors: []}, action) => {
   switch (action.type) {
     case GET_ROOMS:
       return {
@@ -33,6 +33,15 @@ const xiaomi = (state = {rooms: [], input: {}, errors: []}, action) => {
       return {
         ...state,
         errors: []
+      };
+    case SELECT_ROOM:
+      const rooms = state.rooms;
+      const room = rooms[action.id];
+      const _room = {...room, selected: true}
+      const _rooms = {...rooms, [action.id]:_room}
+      return {
+        ...state,
+        rooms: _rooms
       };
     default:
       return state;
