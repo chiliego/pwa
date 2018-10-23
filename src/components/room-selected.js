@@ -39,7 +39,7 @@ class RoomSelected extends connect(store)(LitElement) {
       ${_items.map((item) =>
         html`
           <div>
-            <room-item name="${item.title}" amount="${item.amount}" coords="${item.coords}"></room-item>
+            <room-item .name="${item.title}" .amount="${item.amount}" .coords="${item.coords}"></room-item>
             <button
                 @click="${(e) => store.dispatch(removeFromCart(e.currentTarget.dataset['index']))}"
                 data-index="${item.id}"
