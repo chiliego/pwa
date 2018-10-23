@@ -37,7 +37,7 @@ class RoomList extends connect(store)(LitElement) {
         const item = this._products[key];
         return html`
           <div>
-            <room-item name="${item.title}" amount="${item.inventory}" coords="${JSON.stringify(item.coords)}"></room-item>
+            <room-item name="${item.title}" amount="${item.inventory}" coords="${item.coords}"></room-item>
             <button
                 .disabled="${item.inventory === 0}"
                 @click="${(e) => store.dispatch(addToCart(e.currentTarget.dataset['index']))}"

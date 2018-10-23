@@ -14,7 +14,7 @@ import {
   REMOVE_FROM_CART,
   CHECKOUT_SUCCESS,
   CHECKOUT_FAILURE
-} from '../actions/shop.js';
+} from '../actions/rooms.js';
 import { createSelector } from 'reselect';
 
 const INITIAL_CART = {
