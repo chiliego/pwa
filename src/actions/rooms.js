@@ -50,17 +50,20 @@ export const checkout = (roomId) => (dispatch, getState) => {
     .map(id => state.zonedClean.rooms[id].coords)
     .reduce((array, zone) => {array.push(...zone); return array}, []);
 
-  console.log(JSON.stringify(mergedZones));
-  const flip = Math.floor(Math.random() * 2);
-  if (flip === 0) {
-    dispatch({
-      type: CHECKOUT_FAILURE
-    });
-  } else {
-    dispatch({
-      type: CHECKOUT_SUCCESS
-    });
-  }
+    console.log(JSON.stringify(mergedZones));
+    state.zonedClean.selectedRooms.addedIds
+        .forEach(id => dispatch(deselectRoom(id)));
+
+  // const flip = Math.floor(Math.random() * 2);
+  // if (flip === 0) {
+  //   dispatch({
+  //     type: CHECKOUT_FAILURE
+  //   });
+  // } else {
+  //   dispatch({
+  //     type: CHECKOUT_SUCCESS
+  //   });
+  // }
 };
 
 export const selectRoom = (roomId) => (dispatch, getState) =>{
