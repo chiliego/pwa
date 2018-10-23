@@ -19,9 +19,9 @@ import { store } from '../store.js';
 import { checkout } from '../actions/rooms.js';
 
 // We are lazy loading its reducer.
-import shop, { cartQuantitySelector } from '../reducers/rooms.js';
+import zonedClean, { cartQuantitySelector } from '../reducers/rooms.js';
 store.addReducers({
-  shop
+  zonedClean
 });
 
 // These are the elements needed by this element.
@@ -65,7 +65,7 @@ class MyRobot extends connect(store)(PageViewElement) {
       </style>
 
       <section>
-        <h2>Redux example: shopping cart</h2>
+        <h2>Select rooms for zoned cleaning</h2>
         <div class="cart">${addToCartIcon}<div class="circle small">${_quantity}</div></div>
         <p>This is a slightly more advanced Redux example, that simulates a
           shopping cart: getting the products, adding/removing items to the
@@ -75,11 +75,11 @@ class MyRobot extends connect(store)(PageViewElement) {
         <code>&lt;shop-cart&gt;</code> are connected to the Redux store.</p>
       </section>
       <section>
-        <h3>Products</h3>
+        <h3>Rooms</h3>
         <room-list></room-list>
 
         <br>
-        <h3>Your Cart</h3>
+        <h3>Selected rooms</h3>
         <room-selected></room-selected>
 
         <div>${_error}</div>
@@ -87,7 +87,7 @@ class MyRobot extends connect(store)(PageViewElement) {
         <p>
           <button ?hidden="${_quantity == 0}"
               @click="${() => store.dispatch(checkout())}">
-            Checkout
+            Zoned clean
           </button>
         </p>
       </section>
@@ -103,7 +103,7 @@ class MyRobot extends connect(store)(PageViewElement) {
   // This is called every time something is updated in the store.
   _stateChanged(state) {
     this._quantity = cartQuantitySelector(state);
-    this._error = state.shop.error;
+    this._error = state.zonedClean.error;
   }
 }
 

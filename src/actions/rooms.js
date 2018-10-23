@@ -8,13 +8,13 @@ Code distributed by Google as part of the polymer project is also
 subject to an additional IP rights grant found at http://polymer.github.io/PATENTS.txt
 */
 
-export const GET_PRODUCTS = 'GET_PRODUCTS';
-export const ADD_TO_CART = 'ADD_TO_CART';
-export const REMOVE_FROM_CART = 'REMOVE_FROM_CART';
+export const GET_ROOMS = 'GET_ROOMS';
+export const SELECT_ROOM = 'SELECT_ROOM';
+export const DESELECT_ROOM = 'DESELECT_ROOM';
 export const CHECKOUT_SUCCESS = 'CHECKOUT_SUCCESS';
 export const CHECKOUT_FAILURE = 'CHECKOUT_FAILURE';
 
-const PRODUCT_LIST = [
+const ROOM_LIST = [
   {"id": 1, "title": "Wohnzimmer", "coords": [[25205,21600,30329,26433,1]], "inventory": 1},
   {"id": 2, "title": "Flur", "coords": [[27600,19600,30329,21600,2]], "inventory": 1},
   {"id": 3, "title": "Küche", "coords": [[28300,18688,29600,19600,2],[28300,15830,30200,18688,2]], "inventory": 1},
@@ -30,21 +30,27 @@ export const getAllProducts = () => (dispatch, getState) => {
   // succesfully got the data back)
 
   // You could reformat the data in the right format as well:
-  const products = PRODUCT_LIST.reduce((obj, product) => {
-    obj[product.id] = product
+  const rooms = ROOM_LIST.reduce((obj, room) => {
+    obj[room.id] = room
     return obj
   }, {});
 
   dispatch({
-    type: GET_PRODUCTS,
-    products: products
+    type: GET_ROOMS,
+    rooms: rooms
   });
 };
 
-export const checkout = (productId) => (dispatch) => {
+export const checkout = (roomId) => (dispatch, getState) => {
   // Here you could do things like credit card validation, etc.
   // If that fails, dispatch CHECKOUT_FAILURE. We're simulating that
   // by flipping a coin :)
+  const state = getState();
+  const mergedZones = state.zonedClean.selectedRooms.addedIds
+    .map(id => state.zonedClean.rooms[id].coords)
+    .reduce((array, zone) => {array.push(...zone); return array}, []);
+
+  console.log(JSON.stringify(mergedZones));
   const flip = Math.floor(Math.random() * 2);
   if (flip === 0) {
     dispatch({
@@ -57,25 +63,25 @@ export const checkout = (productId) => (dispatch) => {
   }
 };
 
-export const addToCart = (productId) => (dispatch, getState) =>{
+export const selectRoom = (roomId) => (dispatch, getState) =>{
   const state = getState();
   // Just because the UI thinks you can add this to the cart
   // doesn't mean it's in the inventory (user could've fixed it);
-  if (state.shop.products[productId].inventory > 0) {
-    dispatch(addToCartUnsafe(productId));
+  if (state.zonedClean.rooms[roomId].inventory > 0) {
+    dispatch(selectRoomUnsafe(roomId));
   }
 };
 
-export const removeFromCart = (productId) => {
+export const deselectRoom = (roomId) => {
   return {
-    type: REMOVE_FROM_CART,
-    productId
+    type: DESELECT_ROOM,
+    roomId
   };
 };
 
-export const addToCartUnsafe = (productId) => {
+export const selectRoomUnsafe = (roomId) => {
   return {
-    type: ADD_TO_CART,
-    productId
+    type: SELECT_ROOM,
+    roomId
   };
 };

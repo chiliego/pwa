@@ -18,7 +18,7 @@ import { store } from '../store.js';
 import './room-item.js';
 
 // These are the actions needed by this element.
-import { getAllProducts, addToCart } from '../actions/rooms.js';
+import { getAllProducts, selectRoom } from '../actions/rooms.js';
 
 // These are the elements needed by this element.
 import { addToCartIcon } from './my-icons.js';
@@ -33,14 +33,14 @@ class RoomList extends connect(store)(LitElement) {
       <style>
         :host { display: block; }
       </style>
-      ${Object.keys(this._products).map((key) => {
-        const item = this._products[key];
+      ${Object.keys(this._rooms).map((key) => {
+        const item = this._rooms[key];
         return html`
-          <div>
-            <room-item .name="${item.title}" .amount="${item.inventory}" .coords="${item.coords}"></room-item>
+          <div ?hidden="${item.inventory === 0}">
+            <room-item .name="${item.title}" .coords="${item.coords}"></room-item>
             <button
                 .disabled="${item.inventory === 0}"
-                @click="${(e) => store.dispatch(addToCart(e.currentTarget.dataset['index']))}"
+                @click="${(e) => store.dispatch(selectRoom(e.currentTarget.dataset['index']))}"
                 data-index="${item.id}"
                 title="${item.inventory === 0 ? 'Sold out' : 'Add to cart' }">
               ${item.inventory === 0 ? 'Sold out': addToCartIcon }
@@ -52,7 +52,7 @@ class RoomList extends connect(store)(LitElement) {
   }
 
   static get properties() { return {
-    _products: { type: Object }
+    _rooms: { type: Object }
   }}
 
   firstUpdated() {
@@ -61,7 +61,7 @@ class RoomList extends connect(store)(LitElement) {
 
   // This is called every time something is updated in the store.
   _stateChanged(state) {
-    this._products = state.shop.products;
+    this._rooms = state.zonedClean.rooms;
   }
 }
 

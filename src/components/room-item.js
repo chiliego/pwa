@@ -15,7 +15,6 @@ class RoomItem extends LitElement {
   render() {
     return html`
       ${this.name}:
-      <span ?hidden="${this.amount === 0}">${this.amount} * </span>
       <span>${JSON.stringify(this.coords)}</span>
     `;
   }
@@ -23,7 +22,6 @@ class RoomItem extends LitElement {
   static get properties() {
     return {
       name: { type: String },
-      amount: { type: String },
       coords: { type: Array }
     }
   }

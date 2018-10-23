@@ -9,15 +9,15 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 */
 
 import {
-  GET_PRODUCTS,
-  ADD_TO_CART,
-  REMOVE_FROM_CART,
+  GET_ROOMS,
+  SELECT_ROOM,
+  DESELECT_ROOM,
   CHECKOUT_SUCCESS,
   CHECKOUT_FAILURE
 } from '../actions/rooms.js';
 import { createSelector } from 'reselect';
 
-const INITIAL_CART = {
+const INITIAL_SELECTED_ROOMS = {
   addedIds: [],
   quantityById: {}
 };
@@ -27,20 +27,20 @@ const UPDATED_CART = {
   quantityById: {'1': 1}
 };
 
-const shop = (state = {products: {}, cart: INITIAL_CART}, action) => {
+const zonedClean = (state = {rooms: {}, selectedRooms: INITIAL_SELECTED_ROOMS}, action) => {
   switch (action.type) {
-    case GET_PRODUCTS:
+    case GET_ROOMS:
       return {
         ...state,
-        products: action.products
+        rooms: action.rooms
       };
-    case ADD_TO_CART:
-    case REMOVE_FROM_CART:
+    case SELECT_ROOM:
+    case DESELECT_ROOM:
     case CHECKOUT_SUCCESS:
       return {
         ...state,
-        products: products(state.products, action),
-        cart: cart(state.cart, action),
+        rooms: products(state.rooms, action),
+        selectedRooms: selectedRooms(state.selectedRooms, action),
         error: ''
       };
     case CHECKOUT_FAILURE:
@@ -56,12 +56,12 @@ const shop = (state = {products: {}, cart: INITIAL_CART}, action) => {
 // Slice reducer: it only reduces the bit of the state it's concerned about.
 const products = (state, action) => {
   switch (action.type) {
-    case ADD_TO_CART:
-    case REMOVE_FROM_CART:
-      const productId = action.productId;
+    case SELECT_ROOM:
+    case DESELECT_ROOM:
+      const roomId = action.roomId;
       return {
         ...state,
-        [productId]: product(state[productId], action)
+        [roomId]: product(state[roomId], action)
       };
     default:
       return state;
@@ -70,12 +70,12 @@ const products = (state, action) => {
 
 const product = (state, action) => {
   switch (action.type) {
-    case ADD_TO_CART:
+    case SELECT_ROOM:
       return {
         ...state,
         inventory: state.inventory - 1
       };
-    case REMOVE_FROM_CART:
+    case DESELECT_ROOM:
       return {
         ...state,
         inventory: state.inventory + 1
@@ -85,38 +85,38 @@ const product = (state, action) => {
   }
 };
 
-const cart = (state = INITIAL_CART, action) => {
+const selectedRooms = (state = INITIAL_SELECTED_ROOMS, action) => {
   switch (action.type) {
-    case ADD_TO_CART:
-    case REMOVE_FROM_CART:
+    case SELECT_ROOM:
+    case DESELECT_ROOM:
       return {
         addedIds: addedIds(state.addedIds, state.quantityById, action),
         quantityById: quantityById(state.quantityById, action)
       };
     case CHECKOUT_SUCCESS:
-      return INITIAL_CART;
+      return INITIAL_SELECTED_ROOMS;
     default:
       return state;
   }
 };
 
-const addedIds = (state = INITIAL_CART.addedIds, quantityById, action) => {
-  const productId = action.productId;
+const addedIds = (state = INITIAL_SELECTED_ROOMS.addedIds, quantityById, action) => {
+  const roomId = action.roomId;
   switch (action.type) {
-    case ADD_TO_CART:
-      if (state.indexOf(productId) !== -1) {
+    case SELECT_ROOM:
+      if (state.indexOf(roomId) !== -1) {
         return state;
       }
       return [
         ...state,
-        action.productId
+        action.roomId
       ];
-    case REMOVE_FROM_CART:
+    case DESELECT_ROOM:
       // This is called before the state is updated, so if you have 1 item in the
       // cart during the remove action, you'll have 0.
-      if (quantityById[productId] <= 1) {
+      if (quantityById[roomId] <= 1) {
         // This removes all items in this array equal to productId.
-        return state.filter(e => e !== productId);
+        return state.filter(e => e !== roomId);
       }
       return state;
     default:
@@ -124,25 +124,25 @@ const addedIds = (state = INITIAL_CART.addedIds, quantityById, action) => {
   }
 };
 
-const quantityById = (state = INITIAL_CART.quantityById, action) => {
-  const productId = action.productId;
+const quantityById = (state = INITIAL_SELECTED_ROOMS.quantityById, action) => {
+  const roomId = action.roomId;
   switch (action.type) {
-    case ADD_TO_CART:
+    case SELECT_ROOM:
       return {
         ...state,
-        [productId]: (state[productId] || 0) + 1
+        [roomId]: (state[roomId] || 0) + 1
       };
-    case REMOVE_FROM_CART:
+    case DESELECT_ROOM:
       return {
         ...state,
-        [productId]: (state[productId] || 0) - 1
+        [roomId]: (state[roomId] || 0) - 1
       };
     default:
       return state;
   }
 };
 
-export default shop;
+export default zonedClean;
 
 // Per Redux best practices, the shop data in our store is structured
 // for efficiency (small size and fast updates).
@@ -155,18 +155,18 @@ export default shop;
 // We use a tiny library called `reselect` to create efficient
 // selectors. More info: https://github.com/reduxjs/reselect.
 
-const cartSelector = state => state.shop.cart;
-const productsSelector = state => state.shop.products;
+const selectedRoomsSelector = state => state.zonedClean.selectedRooms;
+const roomsSelector = state => state.zonedClean.rooms;
 
 // Return a flattened array representation of the items in the cart
-export const cartItemsSelector = createSelector(
-  cartSelector,
-  productsSelector,
-  (cart, products) => {
+export const selectedRoomListSelector = createSelector(
+  selectedRoomsSelector,
+  roomsSelector,
+  (selectedRooms, rooms) => {
     const items = [];
-    for (let id of cart.addedIds) {
-      const item = products[id];
-      items.push({id: item.id, title: item.title, amount: cart.quantityById[id], coords: item.coords});
+    for (let id of selectedRooms.addedIds) {
+      const item = rooms[id];
+      items.push({id: item.id, title: item.title, amount: selectedRooms.quantityById[id], coords: item.coords});
     }
     return items;
   }
@@ -174,13 +174,13 @@ export const cartItemsSelector = createSelector(
 
 // Return the total cost of the items in the cart
 export const cartTotalSelector = createSelector(
-  cartSelector,
-  productsSelector,
-  (cart, products) => {
+  selectedRoomsSelector,
+  roomsSelector,
+  (selectedRooms, rooms) => {
     let total = 0;
-    for (let id of cart.addedIds) {
-      const item = products[id];
-      total += item.price * cart.quantityById[id];
+    for (let id of selectedRooms.addedIds) {
+      const item = rooms[id];
+      total += item.price * selectedRooms.quantityById[id];
     }
     return parseFloat(Math.round(total * 100) / 100).toFixed(2);
   }
@@ -188,11 +188,11 @@ export const cartTotalSelector = createSelector(
 
 // Return the number of items in the cart
 export const cartQuantitySelector = createSelector(
-  cartSelector,
-  cart => {
+  selectedRoomsSelector,
+  selectedRooms => {
     let num = 0;
-    for (let id of cart.addedIds) {
-      num += cart.quantityById[id];
+    for (let id of selectedRooms.addedIds) {
+      num += selectedRooms.quantityById[id];
     }
     return num;
   }

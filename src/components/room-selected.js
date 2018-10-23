@@ -19,10 +19,10 @@ import { removeFromCartIcon } from './my-icons.js';
 import './room-item.js';
 
 // These are the actions needed by this element.
-import { removeFromCart } from '../actions/rooms.js';
+import { deselectRoom } from '../actions/rooms.js';
 
 // These are the reducers needed by this element.
-import { cartItemsSelector, cartTotalSelector } from '../reducers/rooms.js';
+import { selectedRoomListSelector, cartTotalSelector } from '../reducers/rooms.js';
 
 // These are the shared styles needed by this element.
 import { ButtonSharedStyles } from './button-shared-styles.js';
@@ -39,9 +39,9 @@ class RoomSelected extends connect(store)(LitElement) {
       ${_items.map((item) =>
         html`
           <div>
-            <room-item .name="${item.title}" .amount="${item.amount}" .coords="${item.coords}"></room-item>
+            <room-item .name="${item.title}" .coords="${item.coords}"></room-item>
             <button
-                @click="${(e) => store.dispatch(removeFromCart(e.currentTarget.dataset['index']))}"
+                @click="${(e) => store.dispatch(deselectRoom(e.currentTarget.dataset['index']))}"
                 data-index="${item.id}"
                 title="Remove from cart">
               ${removeFromCartIcon}
@@ -49,19 +49,16 @@ class RoomSelected extends connect(store)(LitElement) {
           </div>
         `
       )}
-      <p ?hidden="${!_items.length}"><b>Total:</b> ${_total}</p>
     `;
   }
 
   static get properties() { return {
     _items: { type: Array },
-    _total: { type: Number }
   }}
 
   // This is called every time something is updated in the store.
   _stateChanged(state) {
-    this._items = cartItemsSelector(state);
-    this._total = cartTotalSelector(state);
+    this._items = selectedRoomListSelector(state);
   }
 }
 
