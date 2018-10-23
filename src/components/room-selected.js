@@ -29,19 +29,18 @@ import { ButtonSharedStyles } from './button-shared-styles.js';
 
 class RoomSelected extends connect(store)(LitElement) {
   render() {
-    const {_items, _total} = this;
     return html`
       ${ButtonSharedStyles}
       <style>
         :host { display: block; }
       </style>
-      <p ?hidden="${_items.length !== 0}">Please add some products to cart.</p>
-      ${_items.map((item) =>
+      <p ?hidden="${this._items.length !== 0}">Please add some products to cart.</p>
+      ${this._items.map((item) =>
         html`
           <div>
             <room-item .name="${item.title}" .coords="${item.coords}"></room-item>
             <button
-                @click="${(e) => store.dispatch(deselectRoom(e.currentTarget.dataset['index']))}"
+                @click="${this._removeButtonClicked}"
                 data-index="${item.id}"
                 title="Remove from cart">
               ${removeFromCartIcon}
@@ -56,8 +55,12 @@ class RoomSelected extends connect(store)(LitElement) {
     _items: { type: Array },
   }}
 
+  _removeButtonClicked(e) {
+    store.dispatch(deselectRoom(e.currentTarget.dataset['index']));
+  }
+
   // This is called every time something is updated in the store.
-  _stateChanged(state) {
+  stateChanged(state) {
     this._items = selectedRoomListSelector(state);
   }
 }

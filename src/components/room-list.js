@@ -40,7 +40,7 @@ class RoomList extends connect(store)(LitElement) {
             <room-item .name="${item.title}" .coords="${item.coords}"></room-item>
             <button
                 .disabled="${item.inventory === 0}"
-                @click="${(e) => store.dispatch(selectRoom(e.currentTarget.dataset['index']))}"
+                @click="${this._addButtonClicked}"
                 data-index="${item.id}"
                 title="${item.inventory === 0 ? 'Sold out' : 'Add to cart' }">
               ${item.inventory === 0 ? 'Sold out': addToCartIcon }
@@ -59,8 +59,12 @@ class RoomList extends connect(store)(LitElement) {
     store.dispatch(getAllProducts());
   }
 
+  _addButtonClicked(e) {
+    store.dispatch(selectRoom(e.currentTarget.dataset['index']));
+  }
+
   // This is called every time something is updated in the store.
-  _stateChanged(state) {
+  stateChanged(state) {
     this._rooms = state.zonedClean.rooms;
   }
 }

@@ -43,7 +43,7 @@ class JPLogin extends connect(store)(PageViewElement) {
     }
   }
 
-  _stateChanged(state) {
+  stateChanged(state) {
     this.errors = state.login.errors;
   }
 }

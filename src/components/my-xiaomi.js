@@ -100,7 +100,7 @@ class MyXiaomi extends connect(store)(PageViewElement) {
     store.dispatch(getRooms());
   }
 
-  _stateChanged(state) {
+  stateChanged(state) {
     console.log(state);
     this.rooms = state.xiaomi.rooms;
     this.errors = state.xiaomi.errors;
