@@ -10,6 +10,7 @@ subject to an additional IP rights grant found at http://polymer.github.io/PATEN
 
 import {
   GET_ROOMS,
+    REVERSE_ZONES,
   SELECT_ROOM,
   DESELECT_ROOM,
   CHECKOUT_SUCCESS,
@@ -27,8 +28,13 @@ const UPDATED_CART = {
   quantityById: {'1': 1}
 };
 
-const zonedClean = (state = {rooms: {}, selectedRooms: INITIAL_SELECTED_ROOMS}, action) => {
+const zonedClean = (state = {reverse: false, rooms: {}, selectedRooms: INITIAL_SELECTED_ROOMS}, action) => {
   switch (action.type) {
+      case REVERSE_ZONES:
+        return {
+            ...state,
+            reverse: action.option
+        }
     case GET_ROOMS:
       return {
         ...state,

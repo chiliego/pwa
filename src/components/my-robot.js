@@ -16,7 +16,7 @@ import { connect } from 'pwa-helpers/connect-mixin.js';
 import { store } from '../store.js';
 
 // These are the actions needed by this element.
-import { checkout } from '../actions/rooms.js';
+import { getAllProducts, checkout, reverse } from '../actions/rooms.js';
 
 // We are lazy loading its reducer.
 import zonedClean, { cartQuantitySelector } from '../reducers/rooms.js';
@@ -35,6 +35,7 @@ import { addToCartIcon } from './my-icons.js';
 
 class MyRobot extends connect(store)(PageViewElement) {
   render() {
+    this.reverse = true;
     return html`
       ${SharedStyles}
       ${ButtonSharedStyles}
@@ -74,7 +75,10 @@ class MyRobot extends connect(store)(PageViewElement) {
         <code>&lt;shop-cart&gt;</code> are connected to the Redux store.</p>
       </section>
       <section>
-        <h3>Rooms</h3>
+        <h3>Rooms</h3> 
+        <div>
+            <span>Reverse: </span> <input type="checkbox" ?checked="${this._reverse}" @click="${this._reverseCheckboxClicked}"/>
+        </div>
         <room-list></room-list>
 
         <br>
@@ -96,16 +100,23 @@ class MyRobot extends connect(store)(PageViewElement) {
     // This is the data from the store.
     _quantity: { type: Number },
     _error: { type: String },
+      _reverse: {type: Boolean}
   }}
 
   _checkoutButtonClicked() {
     store.dispatch(checkout());
   }
 
+  _reverseCheckboxClicked(e){
+      store.dispatch(reverse(e.target.checked))
+      store.dispatch(getAllProducts());
+  }
+
   // This is called every time something is updated in the store.
   stateChanged(state) {
     this._quantity = cartQuantitySelector(state);
     this._error = state.zonedClean.error;
+    this._reverse = state.zonedClean.reverse;
   }
 }
 

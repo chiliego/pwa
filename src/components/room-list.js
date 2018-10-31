@@ -52,7 +52,7 @@ class RoomList extends connect(store)(LitElement) {
   }
 
   static get properties() { return {
-    _rooms: { type: Object }
+      _rooms: { type: Object },
   }}
 
   firstUpdated() {
